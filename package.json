@@ -1,5 +1,8 @@
 {
   "name": "hetic-calendar-front",
+  "engines": {
+    "node": ">=22.15.0"
+  },
   "private": true,
   "version": "0.0.0",
   "type": "module",
