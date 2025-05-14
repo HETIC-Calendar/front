@@ -1,8 +1,8 @@
-import CalendarBodyDayCalendar from "./calendar-body-day-calendar";
-import CalendarBodyDayEvents from "./calendar-body-day-events";
-import { useCalendarContext } from "../../calendar-context";
-import CalendarBodyDayContent from "./calendar-body-day-content";
-import CalendarBodyMarginDayMargin from "./calendar-body-margin-day-margin";
+import CalendarBodyDayCalendar from "@/components/calendar/body/day/calendar-body-day-calendar";
+import CalendarBodyDayEvents from "@/components/calendar/body/day/calendar-body-day-events";
+import { useCalendarContext } from "@/components/calendar/calendar-context";
+import CalendarBodyDayContent from "@/components/calendar/body/day/calendar-body-day-content";
+import CalendarBodyMarginDayMargin from "@/components/calendar/body/day/calendar-body-margin-day-margin";
 
 export default function CalendarBodyDay() {
   const { date } = useCalendarContext();

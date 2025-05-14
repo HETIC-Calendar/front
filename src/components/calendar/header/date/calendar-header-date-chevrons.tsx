@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useCalendarContext } from "../../calendar-context";
+import { useCalendarContext } from "@/components/calendar/calendar-context";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addDays, addMonths, addWeeks, subDays, subMonths, subWeeks } from "date-fns";
 import { fr } from "date-fns/locale";

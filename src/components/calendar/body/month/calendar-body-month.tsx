@@ -1,4 +1,4 @@
-import { useCalendarContext } from "../../calendar-context";
+import { useCalendarContext } from "@/components/calendar/calendar-context";
 import {
   startOfMonth,
   endOfMonth,
@@ -11,7 +11,7 @@ import {
   isWithinInterval
 } from "date-fns";
 import { cn } from "@/lib/utils";
-import CalendarEvent from "../../calendar-event";
+import CalendarEvent from "@/components/calendar/calendar-event";
 
 export default function CalendarBodyMonth() {
   const { date, events, setDate, setMode } = useCalendarContext();

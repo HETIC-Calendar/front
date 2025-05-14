@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Calendar from "@/components/calendar/calendar";
-import type { CalendarEvent, Mode } from "./components/calendar/calendar-types";
+import type { CalendarEvent, Mode } from "@/components/calendar/calendar-types";
 
 function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);

@@ -1,11 +1,11 @@
-import type { CalendarProps } from "./calendar-types";
-import CalendarHeader from "./header/calendar-header";
-import CalendarBody from "./body/calendar-body";
-import CalendarHeaderActions from "./header/actions/calendar-header-actions";
-import CalendarHeaderDate from "./header/date/calendar-header-date";
-import CalendarHeaderActionsMode from "./header/actions/calendar-header-actions-mode";
-import CalendarHeaderActionsAdd from "./header/actions/calendar-header-actions-add";
-import CalendarProvider from "./calendar-provider";
+import type { CalendarProps } from "@/components/calendar/calendar-types";
+import CalendarHeader from "@/components/calendar/header/calendar-header";
+import CalendarBody from "@/components/calendar/body/calendar-body";
+import CalendarHeaderActions from "@/components/calendar/header/actions/calendar-header-actions";
+import CalendarHeaderDate from "@/components/calendar/header/date/calendar-header-date";
+import CalendarHeaderActionsMode from "@/components/calendar/header/actions/calendar-header-actions-mode";
+import CalendarHeaderActionsAdd from "@/components/calendar/header/actions/calendar-header-actions-add";
+import CalendarProvider from "@/components/calendar/calendar-provider";
 
 export default function Calendar({
   events,

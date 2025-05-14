@@ -1,5 +1,5 @@
 import { format, isSameDay } from "date-fns";
-import { cn } from "../../../lib/utils";
+import { cn } from "@/lib/utils";
 import { fr } from "date-fns/locale";
 
 export default function CalendarBodyHeader({

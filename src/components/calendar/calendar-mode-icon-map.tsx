@@ -1,5 +1,5 @@
 import { Columns2, Grid3X3, List } from "lucide-react";
-import type { Mode } from "./calendar-types";
+import type { Mode } from "@/components/calendar/calendar-types";
 
 export const calendarModeIconMap: Record<Mode, React.ReactNode> = {
   day: <List />,
