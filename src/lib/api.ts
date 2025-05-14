@@ -1,5 +1,6 @@
 import type { CalendarEvent } from "@/components/calendar/calendar-types";
 import type { Event } from "@/lib/types";
+import { getEventColor } from "./utils";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -21,8 +22,9 @@ export const fetchEvents = async () => {
     formattedEvents.push({
       id: event.id,
       title: event.title,
+      status: event.status,
       room: event.roomId,
-      color: "blue",
+      color: getEventColor(event.status),
       start: new Date(event.startTime),
       end: new Date(event.endTime)
     });

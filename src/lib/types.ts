@@ -5,7 +5,7 @@ export interface Room {
 
 export interface Event {
   id: string;
-  status: string;
+  status: EventStatus;
   title: string;
   subject: string;
   description: string;
@@ -16,3 +16,5 @@ export interface Event {
   createdAt: string;
   updatedAt: string;
 }
+
+export type EventStatus = "PENDING_APPROVAL" | "APPROVED" | "REJECTED";

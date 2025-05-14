@@ -16,9 +16,11 @@ export type CalendarContextType = CalendarProps & {
   selectedEvent: CalendarEvent | null;
   setSelectedEvent: (event: CalendarEvent | null) => void;
 };
+
 export type CalendarEvent = {
   id: string;
   title: string;
+  status: string;
   room: string;
   color: string;
   start: Date;
