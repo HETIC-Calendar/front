@@ -1,54 +1,50 @@
-# React + TypeScript + Vite
+# HETIC Calendar - Front-ed
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Commands
 
-Currently, two official plugins are available:
+### Installation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `nvm use` : use right node version
+- `pnpm i` : install deps
 
-## Expanding the ESLint configuration
+### Developpement
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- `pnpm dev` : launch dev server
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Build
+
+- `pnpm build` : build app
+- `pnpm preview` : launch preview server
+
+### Others
+
+- `pnpm prepare` : use husky
+- `pnpm lint` : linter
+- `pnpm format` : format codebase
+
+## Structure
+
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+├── README.md
+├── config.js
+├── components.json
+├── dist
+├── index.html
+├── package.json
+├── pnpm.yaml
+├── public
+│   └── favicon.svg
+├── src
+│   ├── App.tsx
+│   ├── components
+│   │   ├── component (custom)
+│   │       └── part.tsx
+│   │   └── ui (shadcn)
+│   │       └── component.tsx
+│   ├── index.css
+│   ├── lib
+│   │   └── utils.ts
+│   ├── main.tsx
+│   └── vite-env.d.ts
+└── tsconfig.json
 ```
