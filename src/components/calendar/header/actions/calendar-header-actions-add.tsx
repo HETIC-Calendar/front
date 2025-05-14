@@ -1,16 +1,16 @@
-import { Button } from '@/components/ui/button'
-import { Plus } from 'lucide-react'
-import { useCalendarContext } from '../../calendar-context'
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { useCalendarContext } from "../../calendar-context";
 
 export default function CalendarHeaderActionsAdd() {
-  const { setNewEventDialogOpen } = useCalendarContext()
+  const { setNewEventDialogOpen } = useCalendarContext();
   return (
     <Button
-      className="flex items-center gap-1 bg-primary text-background"
+      className="bg-primary text-background flex items-center gap-1"
       onClick={() => setNewEventDialogOpen(true)}
     >
       <Plus />
       Ajouter une conférence
     </Button>
-  )
+  );
 }

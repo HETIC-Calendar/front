@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Calendar from '@/components/calendar/calendar'
-import type { CalendarEvent, Mode } from './components/calendar/calendar-types'
+import { useState } from "react";
+import Calendar from "@/components/calendar/calendar";
+import type { CalendarEvent, Mode } from "./components/calendar/calendar-types";
 
-export default function CalendarDemo() {
-  const [events, setEvents] = useState<CalendarEvent[]>([])
-  const [mode, setMode] = useState<Mode>('month')
-  const [date, setDate] = useState<Date>(new Date())
+function App() {
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [mode, setMode] = useState<Mode>("month");
+  const [date, setDate] = useState<Date>(new Date());
 
   return (
     <Calendar
@@ -18,5 +18,7 @@ export default function CalendarDemo() {
       date={date}
       setDate={setDate}
     />
-  )
+  );
 }
+
+export default App;
