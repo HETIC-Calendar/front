@@ -95,7 +95,7 @@ export default function CalendarEvent({
           <span className={cn("mx-1", month && "hidden")}>-</span>
           <span className={cn(month && "hidden")}>{format(event.end, "H:mm")}</span>
         </p>
-        <p className="truncate text-sm">{event.room}</p>
+        <p className={cn("truncate text-sm", month && "hidden")}>{event.room}</p>
       </div>
     </div>
   );
