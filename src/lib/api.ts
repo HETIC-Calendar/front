@@ -1,6 +1,4 @@
-import type { CalendarEvent } from "@/components/calendar/calendar-types";
 import type { Room, Talk } from "@/lib/types";
-import { getEventColor } from "@/lib/utils";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -75,17 +73,9 @@ export const fetchRooms = async () => {
 
 export const fetchTalks = async () => {
   const result = await apiGet<{ talks: Talk[] }>("/talks");
-  const formattedEvents: CalendarEvent[] = [];
-  result.talks.forEach((talk: Talk) => {
-    formattedEvents.push({
-      id: talk.id,
-      title: talk.title,
-      status: talk.status,
-      room: talk.roomId,
-      color: getEventColor(talk.status),
-      start: new Date(talk.startTime),
-      end: new Date(talk.endTime)
-    });
-  });
-  return formattedEvents;
+  return result.talks;
+};
+
+export const createTalk = async (talk: Omit<Talk, "id" | "createdAt" | "updatedAt">) => {
+  await apiPost<{ talk: Talk }>("/talks", talk);
 };

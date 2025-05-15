@@ -1,8 +1,8 @@
-import type { CalendarEvent as CalendarEventType } from "@/components/calendar/calendar-types";
 import { useCalendarContext } from "@/components/calendar/calendar-context";
 import { format, isSameDay } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, getTalkColor } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import type { Talk } from "@/lib/types";
 
 interface EventPosition {
   left: string;
@@ -11,37 +11,33 @@ interface EventPosition {
   height: string;
 }
 
-function getOverlappingEvents(
-  currentEvent: CalendarEventType,
-  events: CalendarEventType[]
-): CalendarEventType[] {
+function getOverlappingEvents(currentEvent: Talk, events: Talk[]): Talk[] {
   return events.filter((event) => {
     if (event.id === currentEvent.id) return false;
     return (
-      currentEvent.start < event.end &&
-      currentEvent.end > event.start &&
-      isSameDay(currentEvent.start, event.start)
+      currentEvent.startTime < event.endTime &&
+      currentEvent.endTime > event.startTime &&
+      isSameDay(currentEvent.startTime, event.startTime)
     );
   });
 }
 
-function calculateEventPosition(
-  event: CalendarEventType,
-  allEvents: CalendarEventType[]
-): EventPosition {
+function calculateEventPosition(event: Talk, allEvents: Talk[]): EventPosition {
   const overlappingEvents = getOverlappingEvents(event, allEvents);
-  const group = [event, ...overlappingEvents].sort((a, b) => a.start.getTime() - b.start.getTime());
+  const group = [event, ...overlappingEvents].sort(
+    (a, b) => a.startTime.getTime() - b.startTime.getTime()
+  );
   const position = group.indexOf(event);
   const width = `${100 / (overlappingEvents.length + 1)}%`;
   const left = `${(position * 100) / (overlappingEvents.length + 1)}%`;
 
-  const startHour = event.start.getHours();
-  const startMinutes = event.start.getMinutes();
+  const startHour = new Date(event.startTime).getHours();
+  const startMinutes = new Date(event.startTime).getMinutes();
 
-  let endHour = event.end.getHours();
-  let endMinutes = event.end.getMinutes();
+  let endHour = new Date(event.endTime).getHours();
+  let endMinutes = new Date(event.endTime).getMinutes();
 
-  if (!isSameDay(event.start, event.end)) {
+  if (!isSameDay(event.startTime, event.endTime)) {
     endHour = 23;
     endMinutes = 59;
   }
@@ -63,7 +59,7 @@ export default function CalendarEvent({
   month = false,
   className
 }: {
-  event: CalendarEventType;
+  event: Talk;
   month?: boolean;
   className?: string;
 }) {
@@ -73,7 +69,7 @@ export default function CalendarEvent({
   return (
     <div
       className={cn(
-        `cursor-pointer truncate rounded-md px-3 py-1.5 transition-all duration-300 bg-${event.color}-500/10 hover:bg-${event.color}-500/20 border border-${event.color}-500`,
+        `cursor-pointer truncate rounded-md px-3 py-1.5 transition-all duration-300 bg-${getTalkColor(event.status)}-500/10 hover:bg-${getTalkColor(event.status)}-500/20 border border-${getTalkColor(event.status)}-500`,
         !month && "absolute",
         className
       )}
@@ -86,20 +82,22 @@ export default function CalendarEvent({
     >
       <div
         className={cn(
-          `flex w-full flex-col text-${event.color}-500`,
+          `flex w-full flex-col text-${getTalkColor(event.status)}-500`,
           month && "flex-row items-center justify-between"
         )}
       >
         <div className="flex flex-wrap items-center gap-x-2">
           <p className={cn("truncate font-bold", month && "text-xs")}>{event.title}</p>
-          <Badge className={cn(`bg-${event.color}-500`, "max-w-full", month && "hidden")}>
-            {event.room}
+          <Badge
+            className={cn(`bg-${getTalkColor(event.status)}-500`, "max-w-full", month && "hidden")}
+          >
+            {event.roomId}
           </Badge>
         </div>
         <p className={cn("text-sm", month && "text-xs")}>
-          <span>{format(event.start, "H:mm")}</span>
+          <span>{format(event.startTime, "H:mm")}</span>
           <span className={cn("mx-1", month && "hidden")}>-</span>
-          <span className={cn(month && "hidden")}>{format(event.end, "H:mm")}</span>
+          <span className={cn(month && "hidden")}>{format(event.endTime, "H:mm")}</span>
         </p>
       </div>
     </div>

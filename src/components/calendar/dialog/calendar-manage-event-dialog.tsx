@@ -103,9 +103,9 @@ export default function CalendarManageEventDialog() {
     if (selectedEvent) {
       form.reset({
         title: selectedEvent.title,
-        room: selectedEvent.room,
-        start: format(selectedEvent.start, "yyyy-MM-dd'T'HH:mm"),
-        end: format(selectedEvent.end, "yyyy-MM-dd'T'HH:mm")
+        room: selectedEvent.roomId,
+        start: format(selectedEvent.startTime, "yyyy-MM-dd'T'HH:mm"),
+        end: format(selectedEvent.endTime, "yyyy-MM-dd'T'HH:mm")
       });
     }
   }, [selectedEvent, form]);

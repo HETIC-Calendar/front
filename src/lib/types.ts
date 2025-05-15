@@ -18,15 +18,15 @@ export interface Talk {
   speaker: string;
   roomId: string;
   level: TalkLevel;
-  startTime: string;
-  endTime: string;
+  startTime: Date;
+  endTime: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export type TalkStatus = "PENDING_APPROVAL" | "APPROVED" | "REJECTED";
 
-type TalkSubject =
+export type TalkSubject =
   | "AI"
   | "WEB_DEVELOPMENT"
   | "MOBILE_DEVELOPMENT"
@@ -38,4 +38,4 @@ type TalkSubject =
   | "IOT"
   | "GAME_DEVELOPMENT";
 
-type TalkLevel = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
+export type TalkLevel = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";

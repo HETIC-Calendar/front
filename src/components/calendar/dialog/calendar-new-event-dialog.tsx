@@ -23,8 +23,9 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { fetchRooms } from "@/lib/api";
-import type { Room } from "@/lib/types";
+import { createTalk, fetchRooms } from "@/lib/api";
+import type { Room, TalkLevel, TalkStatus, TalkSubject } from "@/lib/types";
+import { loadEvents } from "@/lib/utils";
 
 const formSchema = z
   .object({
@@ -47,8 +48,7 @@ const formSchema = z
 
 export default function CalendarNewEventDialog() {
   const [rooms, setRooms] = useState<Room[]>([]);
-  const { newEventDialogOpen, setNewEventDialogOpen, date, events, setEvents } =
-    useCalendarContext();
+  const { newEventDialogOpen, setNewEventDialogOpen, date, setEvents } = useCalendarContext();
 
   useEffect(() => {
     const loadRooms = async () => {
@@ -68,18 +68,22 @@ export default function CalendarNewEventDialog() {
     }
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     const newEvent = {
-      id: crypto.randomUUID(),
       title: values.title,
-      status: "PENDING_APPROVAL",
-      room: values.room,
-      start: new Date(values.start),
-      end: new Date(values.end),
-      color: "orange"
+      subject: "AI" as TalkSubject,
+      description: "Description of the talk",
+      speaker: "Speaker Name",
+      roomId: values.room,
+      level: "BEGINNER" as TalkLevel,
+      status: "APPROVED" as TalkStatus,
+      startTime: new Date(values.start),
+      endTime: new Date(values.end)
     };
 
-    setEvents([...events, newEvent]);
+    await createTalk(newEvent);
+    await loadEvents(setEvents);
+
     setNewEventDialogOpen(false);
     form.reset();
   }

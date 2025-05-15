@@ -37,10 +37,10 @@ export default function CalendarBodyMonth() {
   // Filter events to only show those within the current month view
   const visibleEvents = events.filter(
     (event) =>
-      isWithinInterval(event.start, {
+      isWithinInterval(event.startTime, {
         start: calendarStart,
         end: calendarEnd
-      }) || isWithinInterval(event.end, { start: calendarStart, end: calendarEnd })
+      }) || isWithinInterval(event.endTime, { start: calendarStart, end: calendarEnd })
   );
 
   return (
@@ -61,7 +61,7 @@ export default function CalendarBodyMonth() {
         className="relative grid flex-grow overflow-y-auto md:grid-cols-7"
       >
         {calendarDays.map((day) => {
-          const dayEvents = visibleEvents.filter((event) => isSameDay(event.start, day));
+          const dayEvents = visibleEvents.filter((event) => isSameDay(event.startTime, day));
           const isToday = isSameDay(day, today);
           const isCurrentMonth = isSameMonth(day, date);
 
