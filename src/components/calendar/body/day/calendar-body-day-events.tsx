@@ -1,16 +1,18 @@
 import { useCalendarContext } from "@/components/calendar/calendar-context";
-import { getTalkColor } from "@/lib/utils";
+
+import { getTalkColor, getFilteredEvents } from "@/lib/utils";
 import { isSameDay } from "date-fns";
 
 export default function CalendarBodyDayEvents() {
-  const { events, date, setManageEventDialogOpen, setSelectedEvent } = useCalendarContext();
+  const { events, date, setManageEventDialogOpen, setSelectedEvent, filters } =
+    useCalendarContext();
   const dayEvents = events.filter((event) => isSameDay(event.startTime, date));
 
   return dayEvents.length ? (
     <div className="flex flex-col gap-2">
       <p className="font-heading p-2 pb-0 font-medium">Conférence(s)</p>
       <div className="flex flex-col gap-2">
-        {dayEvents.map((event) => (
+        {getFilteredEvents(dayEvents, filters).map((event) => (
           <div
             key={event.id}
             className="flex cursor-pointer items-center gap-2 px-2"

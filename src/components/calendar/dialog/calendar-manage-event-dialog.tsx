@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/select";
 import { approveTalk, fetchRooms, rejectTalk } from "@/lib/api";
 import type { Room } from "@/lib/types";
+import CalendarFavorite from "./calendar-favorite";
 import { loadEvents } from "@/lib/utils";
 import { useStore } from "@/store/store";
 
@@ -73,7 +74,7 @@ const formSchema = z
   );
 
 export default function CalendarManageEventDialog() {
-  const { hasRole } = useStore();
+  const { user, hasRole } = useStore();
   const [rooms, setRooms] = useState<Room[]>([]);
   const {
     manageEventDialogOpen,
@@ -216,6 +217,11 @@ export default function CalendarManageEventDialog() {
             />
 
             <DialogFooter className="flex justify-between gap-2">
+              {!user && selectedEvent && (
+                <div className="mr-auto">
+                  <CalendarFavorite eventId={selectedEvent.id} />
+                </div>
+              )}
               {selectedEvent &&
                 selectedEvent.status === "PENDING_APPROVAL" &&
                 hasRole("PLANNER") && (
