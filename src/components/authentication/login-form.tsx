@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import type { User } from "@/lib/types";
 import { useStore } from "@/store/store";
 import { jwtDecode } from "jwt-decode";
-import { login } from "@/lib/api";
+import { login } from "@/lib/auth";
 
 const formSchema = z.object({
   email: z.string().email(),

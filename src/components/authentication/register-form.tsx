@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
-import { register } from "@/lib/api";
+import { register } from "@/lib/auth";
 
 const formSchema = z.object({
   email: z.string().email(),

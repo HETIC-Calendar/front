@@ -1,4 +1,4 @@
-import { useCalendarContext } from "../../calendar-context";
+import { useCalendarContext } from "@/components/calendar/calendar-context";
 import { Calendar } from "@/components/ui/calendar";
 import { fr } from "date-fns/locale";
 

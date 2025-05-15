@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { TalkStatus } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -73,3 +74,13 @@ export async function apiDelete<T>(
 ): Promise<T> {
   return apiFetch<T>(endpoint, body, { ...options, method: "DELETE" });
 }
+export const getEventColor = (status: TalkStatus) => {
+  switch (status) {
+    case "PENDING_APPROVAL":
+      return "orange";
+    case "APPROVED":
+      return "emerald";
+    case "REJECTED":
+      return "red";
+  }
+};
