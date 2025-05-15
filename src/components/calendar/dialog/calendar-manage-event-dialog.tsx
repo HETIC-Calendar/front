@@ -71,7 +71,7 @@ const formSchema = z
   );
 
 export default function CalendarManageEventDialog() {
-  const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
   const {
     manageEventDialogOpen,
     setManageEventDialogOpen,
@@ -166,7 +166,10 @@ export default function CalendarManageEventDialog() {
                 <FormItem>
                   <FormLabel className="font-bold">Salle</FormLabel>
                   <FormControl>
-                    <Select onValueChange={(value) => field.onChange(value)} value={field.value}>
+                    <Select
+                      onValueChange={(value: string) => field.onChange(value)}
+                      value={field.value}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Salles" />
                       </SelectTrigger>

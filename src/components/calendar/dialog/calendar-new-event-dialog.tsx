@@ -46,7 +46,7 @@ const formSchema = z
   );
 
 export default function CalendarNewEventDialog() {
-  const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
   const { newEventDialogOpen, setNewEventDialogOpen, date, events, setEvents } =
     useCalendarContext();
 
@@ -88,7 +88,7 @@ export default function CalendarNewEventDialog() {
     <Dialog open={newEventDialogOpen} onOpenChange={setNewEventDialogOpen}>
       <DialogContent aria-describedby={undefined}>
         <DialogHeader>
-          <DialogTitle>Créer une conférence</DialogTitle>
+          <DialogTitle>Proposer une conférence</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -113,7 +113,10 @@ export default function CalendarNewEventDialog() {
                 <FormItem>
                   <FormLabel className="font-bold">Salle</FormLabel>
                   <FormControl>
-                    <Select onValueChange={(value) => field.onChange(value)} value={field.value}>
+                    <Select
+                      onValueChange={(value: string) => field.onChange(value)}
+                      value={field.value}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Salles" />
                       </SelectTrigger>
@@ -160,7 +163,7 @@ export default function CalendarNewEventDialog() {
             />
 
             <div className="flex justify-end">
-              <Button type="submit">Créer la conférence</Button>
+              <Button type="submit">Proposer la conférence</Button>
             </div>
           </form>
         </Form>

@@ -1,4 +1,4 @@
-import { apiPost } from "./utils";
+import { apiPost } from "@/lib/api";
 
 export async function login(email: string, password: string) {
   const response = await apiPost<{ token: string }>("/auth/login", { email, password });

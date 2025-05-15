@@ -100,7 +100,7 @@ export default function CalendarBodyMonth() {
                       setMode("day");
                     }}
                   >
-                    +{dayEvents.length - 3} autres
+                    +{dayEvents.length - 3} autre(s)
                   </div>
                 )}
               </div>

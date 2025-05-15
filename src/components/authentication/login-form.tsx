@@ -42,10 +42,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       useStore.getState().setUser({ ...decoded, role: "talker" });
 
       toast("Bienvenue!");
-      if (decoded.role === "organizer") {
-        navigate("/dashboard-organizer");
-      }
-      navigate("/dashboard-talker");
+      navigate("/");
     } catch (error) {
       console.error(error);
     }

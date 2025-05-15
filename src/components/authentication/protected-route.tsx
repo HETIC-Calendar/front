@@ -9,14 +9,11 @@ type ProtectedRouteProps = {
 
 const ProtectedRoute = ({ children, requiredRole, redirectPath }: ProtectedRouteProps) => {
   const { user, authLoading, hasRole } = useStore();
-  if (authLoading) {
+  if (authLoading || !user) {
     return null;
   }
-  if (!user) {
-    return <Navigate to={redirectPath || "/login"} />;
-  }
   if (requiredRole && !hasRole(requiredRole)) {
-    return <Navigate to={redirectPath || "/unauthorized"} />;
+    return <Navigate to={redirectPath || "/"} />;
   }
   return children;
 };

@@ -2,14 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Calendar from "@/components/calendar/calendar";
-import type { CalendarEvent, Mode } from "./components/calendar/calendar-types";
+import type { CalendarEvent, Mode } from "@/components/calendar/calendar-types";
 import { BrowserRouter, Routes, Route } from "react-router";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import { AuthProvider } from "./components/authentication/auth-provider";
-import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./components/authentication/protected-route";
-import Unauthorized from "./pages/Unauthorized";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import { AuthProvider } from "@/components/authentication/auth-provider";
 import { fetchTalks } from "@/lib/api";
 
 function App() {
@@ -44,23 +41,6 @@ function App() {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route
-            path="/dashboard-organizer"
-            element={
-              <ProtectedRoute requiredRole="organizer">
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard-talker"
-            element={
-              <ProtectedRoute requiredRole="talker">
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
