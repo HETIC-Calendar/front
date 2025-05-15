@@ -31,23 +31,26 @@ import { Textarea } from "@/components/ui/textarea";
 const formSchema = z
   .object({
     title: z.string().min(1, "L'intitulé est requis"),
-    subject: z.enum([
-      "AI",
-      "WEB_DEVELOPMENT",
-      "MOBILE_DEVELOPMENT",
-      "DATA_SCIENCE",
-      "CLOUD_COMPUTING",
-      "DEVOPS",
-      "CYBER_SECURITY",
-      "BLOCKCHAIN",
-      "IOT",
-      "GAME_DEVELOPMENT"
-    ]),
+    subject: z.enum(
+      [
+        "AI",
+        "WEB_DEVELOPMENT",
+        "MOBILE_DEVELOPMENT",
+        "DATA_SCIENCE",
+        "CLOUD_COMPUTING",
+        "DEVOPS",
+        "CYBER_SECURITY",
+        "BLOCKCHAIN",
+        "IOT",
+        "GAME_DEVELOPMENT"
+      ],
+      { message: "Le sujet est requis" }
+    ),
     description: z.string().min(2, "La description doit contenir au moins 2 caractères"),
     roomId: z.string().min(1, "La salle est requise"),
     startTime: z.string().datetime({ message: "Date de début invalide" }),
     endTime: z.string().datetime({ message: "Date de fin invalide" }),
-    level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"])
+    level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"], { message: "Le niveau est requis" })
   })
   .refine(
     (data) => {
@@ -83,9 +86,9 @@ export default function CalendarNewEventDialog() {
       subject: undefined,
       description: "",
       roomId: "",
-      level: undefined,
       startTime: format(date, "yyyy-MM-dd'T'HH:mm"),
-      endTime: format(date, "yyyy-MM-dd'T'HH:mm")
+      endTime: format(date, "yyyy-MM-dd'T'HH:mm"),
+      level: undefined
     }
   });
 
@@ -95,9 +98,9 @@ export default function CalendarNewEventDialog() {
       subject: values.subject,
       description: values.description,
       roomId: values.roomId,
-      level: values.level,
       startTime: new Date(values.startTime),
-      endTime: new Date(values.endTime)
+      endTime: new Date(values.endTime),
+      level: values.level
     };
 
     await createTalk(newEvent);

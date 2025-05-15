@@ -82,17 +82,26 @@ export const fetchTalks = async () => {
 };
 
 export const createTalk = async (
-  talk: Omit<Talk, "id" | "room" | "speaker" | "status" | "createdAt" | "updatedAt"> & {
+  talk: Omit<Talk, "id" | "status" | "speaker" | "room" | "createdAt" | "updatedAt"> & {
     roomId: string;
   }
 ) => {
   await apiPost<{ talk: Talk }>("/talks", talk);
 };
 
+export const editTalk = async (
+  talkId: string,
+  talk: Omit<Talk, "id" | "status" | "speaker" | "room" | "createdAt" | "updatedAt"> & {
+    roomId: string;
+  }
+) => {
+  await apiPost<{ talk: Talk }>(`/talks/${talkId}`, talk);
+};
+
 export const rejectTalk = async (talkId: string) => {
-  await apiPost<{ talk: Talk }>(`/talks/${talkId}/approve-or-reject`, { isApproved: false });
+  await apiPost(`/talks/${talkId}/approve-or-reject`, { isApproved: false });
 };
 
 export const approveTalk = async (talkId: string) => {
-  await apiPost<{ talk: Talk }>(`/talks/${talkId}/approve-or-reject`, { isApproved: true });
+  await apiPost(`/talks/${talkId}/approve-or-reject`, { isApproved: true });
 };
