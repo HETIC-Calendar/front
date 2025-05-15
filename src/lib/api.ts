@@ -69,12 +69,12 @@ export async function apiDelete<T>(
 }
 
 export const fetchRooms = async () => {
-  const result = await apiGet<{ rooms: Room[] }>("rooms");
+  const result = await apiGet<{ rooms: Room[] }>("/rooms");
   return result.rooms;
 };
 
 export const fetchTalks = async () => {
-  const result = await apiGet<{ talks: Talk[] }>("talks");
+  const result = await apiGet<{ talks: Talk[] }>("/talks");
   const formattedEvents: CalendarEvent[] = [];
   result.talks.forEach((talk: Talk) => {
     formattedEvents.push({

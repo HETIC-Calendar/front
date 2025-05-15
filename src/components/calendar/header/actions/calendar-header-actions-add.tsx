@@ -10,7 +10,7 @@ export default function CalendarHeaderActionsAdd() {
       onClick={() => setNewEventDialogOpen(true)}
     >
       <Plus />
-      Ajouter une conférence
+      Proposer une conférence
     </Button>
   );
 }
