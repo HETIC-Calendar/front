@@ -1,8 +1,11 @@
 export type User = {
   id: string;
   email: string;
-  role: "organizer" | "talker";
+  type: UserType;
 };
+
+type UserType = "SPEAKER" | "PLANNER";
+
 export interface Room {
   id: string;
   name: string;
@@ -16,10 +19,10 @@ export interface Talk {
   subject: TalkSubject;
   description: string;
   speaker: string;
-  roomId: string;
+  room: Room;
   level: TalkLevel;
-  startTime: string;
-  endTime: string;
+  startTime: Date;
+  endTime: Date;
   createdAt: Date;
   updatedAt: Date;
 }

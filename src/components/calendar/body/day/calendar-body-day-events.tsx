@@ -1,5 +1,6 @@
 import { useCalendarContext } from "@/components/calendar/calendar-context";
-import { getFilteredEvents, getTalkColor } from "@/lib/utils";
+
+import { getTalkColor, getFilteredEvents } from "@/lib/utils";
 import { isSameDay } from "date-fns";
 
 export default function CalendarBodyDayEvents() {

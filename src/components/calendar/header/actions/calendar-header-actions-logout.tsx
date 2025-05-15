@@ -5,7 +5,7 @@ export default function CalendarHeaderActionsLogout() {
   const logout = useLogout();
   return (
     <Button variant="destructive" onClick={logout}>
-      Se deconnecter
+      Se déconnecter
     </Button>
   );
 }

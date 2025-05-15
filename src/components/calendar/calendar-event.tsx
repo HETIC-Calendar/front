@@ -91,7 +91,7 @@ export default function CalendarEvent({
           <Badge
             className={cn(`bg-${getTalkColor(event.status)}-500`, "max-w-full", month && "hidden")}
           >
-            {event.roomId}
+            {event.room.name}
           </Badge>
         </div>
         <p className={cn("text-sm", month && "text-xs")}>

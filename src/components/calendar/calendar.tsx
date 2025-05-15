@@ -22,7 +22,7 @@ export default function Calendar({
   filters,
   setFilters
 }: CalendarProps) {
-  const { user } = useStore();
+  const { user, hasRole } = useStore();
 
   return (
     <CalendarProvider
@@ -41,9 +41,7 @@ export default function Calendar({
         <CalendarHeaderActions>
           <CalendarHeaderActionsFilters />
           <CalendarHeaderActionsMode />
-          {/* <ProtectedRoute requiredRole="talker"> */}
-          <CalendarHeaderActionsAdd />
-          {/* </ProtectedRoute> */}
+          {hasRole("SPEAKER") && <CalendarHeaderActionsAdd />}
           {user ? <CalendarHeaderActionsLogout /> : <CalendarHeaderActionsLogin />}
         </CalendarHeaderActions>
       </CalendarHeader>
