@@ -6,27 +6,37 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import type { TalkSubject, TalkLevel } from "@/lib/types";
-import { TALK_SUBJECT_LABELS, TALK_LEVEL_LABELS } from "@/lib/types";
+import {
+  type TalkSubject,
+  type TalkLevel,
+  TALK_SUBJECT_LABELS,
+  TALK_LEVEL_LABELS
+} from "@/lib/types";
 import { useCalendarContext } from "@/components/calendar/calendar-context";
 import { Label } from "@/components/ui/label";
+import { useStore } from "@/store/store";
 
 export default function CalendarHeaderActionsFilters() {
   const { filters, setFilters } = useCalendarContext();
+  const { user } = useStore();
 
   return (
     <>
-      <Checkbox
-        id="favorites"
-        checked={filters.byFavorites}
-        onCheckedChange={(checked: boolean) => {
-          setFilters({
-            ...filters,
-            byFavorites: checked
-          });
-        }}
-      />
-      <Label htmlFor="favorites">Mes favoris</Label>
+      {!user && (
+        <>
+          <Checkbox
+            id="favorites"
+            checked={filters.byFavorites}
+            onCheckedChange={(checked: boolean) => {
+              setFilters({
+                ...filters,
+                byFavorites: checked
+              });
+            }}
+          />
+          <Label htmlFor="favorites">Mes favoris</Label>
+        </>
+      )}
       <Select
         value={filters?.selectedLevel || "All"}
         onValueChange={(value) => {

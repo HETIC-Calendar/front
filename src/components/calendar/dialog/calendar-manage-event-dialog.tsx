@@ -7,7 +7,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter
+  DialogFooter,
+  DialogDescription
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -23,45 +24,53 @@ import { useCalendarContext } from "@/components/calendar/calendar-context";
 import { format } from "date-fns";
 import { DateTimePicker } from "@/components/form/date-time-picker";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { approveTalk, fetchRooms, rejectTalk } from "@/lib/api";
-import type { Room } from "@/lib/types";
-import CalendarFavorite from "./calendar-favorite";
+import { editTalk, fetchRooms } from "@/lib/api";
+import { TALK_LEVEL_LABELS, TALK_SUBJECT_LABELS, type Room } from "@/lib/types";
+import CalendarFavorite from "@/components/calendar/dialog/calendar-favorite";
+import CalendarActions from "@/components/calendar/dialog/calendar-actions";
 import { loadEvents } from "@/lib/utils";
 import { useStore } from "@/store/store";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z
   .object({
     title: z.string().min(1, "L'intitulé est requis"),
-    room: z.string().min(1, "La salle est requise"),
-    start: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    subject: z.enum(
+      [
+        "AI",
+        "WEB_DEVELOPMENT",
+        "MOBILE_DEVELOPMENT",
+        "DATA_SCIENCE",
+        "CLOUD_COMPUTING",
+        "DEVOPS",
+        "CYBER_SECURITY",
+        "BLOCKCHAIN",
+        "IOT",
+        "GAME_DEVELOPMENT"
+      ],
+      { message: "Le sujet est requis" }
+    ),
+    description: z.string().min(2, "La description doit contenir au moins 2 caractères"),
+    roomId: z.string().min(1, "La salle est requise"),
+    startTime: z.string().refine((val) => !isNaN(Date.parse(val)), {
       message: "Date de début invalide"
     }),
-    end: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    endTime: z.string().refine((val) => !isNaN(Date.parse(val)), {
       message: "Date de fin invalide"
-    })
+    }),
+    level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"], { message: "Le niveau est requis" })
   })
   .refine(
     (data) => {
       try {
-        const start = new Date(data.start);
-        const end = new Date(data.end);
+        const start = new Date(data.startTime);
+        const end = new Date(data.endTime);
         return end >= start;
       } catch {
         return false;
@@ -72,6 +81,9 @@ const formSchema = z
       path: ["end"]
     }
   );
+
+const subjects = Object.entries(TALK_SUBJECT_LABELS);
+const levels = Object.entries(TALK_LEVEL_LABELS);
 
 export default function CalendarManageEventDialog() {
   const { user, hasRole } = useStore();
@@ -96,9 +108,12 @@ export default function CalendarManageEventDialog() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      room: "",
-      start: "",
-      end: ""
+      subject: undefined,
+      description: "",
+      roomId: "",
+      startTime: "",
+      endTime: "",
+      level: undefined
     }
   });
 
@@ -106,29 +121,32 @@ export default function CalendarManageEventDialog() {
     if (selectedEvent) {
       form.reset({
         title: selectedEvent.title,
-        room: selectedEvent.room.id,
-        start: format(selectedEvent.startTime, "yyyy-MM-dd'T'HH:mm"),
-        end: format(selectedEvent.endTime, "yyyy-MM-dd'T'HH:mm")
+        subject: selectedEvent.subject,
+        description: selectedEvent.description,
+        roomId: selectedEvent.room.id,
+        startTime: format(selectedEvent.startTime, "yyyy-MM-dd'T'HH:mm"),
+        endTime: format(selectedEvent.endTime, "yyyy-MM-dd'T'HH:mm"),
+        level: selectedEvent.level
       });
     }
   }, [selectedEvent, form]);
 
-  function onSubmit() {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!selectedEvent) return;
-    handleClose();
-  }
 
-  async function handleApprove() {
-    if (!selectedEvent) return;
-    await approveTalk(selectedEvent.id);
-    await loadEvents(setEvents);
-    handleClose();
-  }
+    const newEvent = {
+      title: values.title,
+      subject: values.subject,
+      description: values.description,
+      roomId: values.roomId,
+      startTime: new Date(values.startTime),
+      endTime: new Date(values.endTime),
+      level: values.level
+    };
 
-  async function handleReject() {
-    if (!selectedEvent) return;
-    await rejectTalk(selectedEvent.id);
+    await editTalk(selectedEvent.id, newEvent);
     await loadEvents(setEvents);
+
     handleClose();
   }
 
@@ -138,83 +156,165 @@ export default function CalendarManageEventDialog() {
     form.reset();
   }
 
+  const canEdit =
+    selectedEvent?.status === "PENDING_APPROVAL" &&
+    (hasRole("PLANNER") || (hasRole("SPEAKER") && selectedEvent?.speaker.id === user?.id));
+
   return (
     <Dialog open={manageEventDialogOpen} onOpenChange={handleClose}>
       <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>Modifier une conférence</DialogTitle>
+          <DialogDescription>
+            Proposé par <span className="font-medium">{selectedEvent?.speaker.email}</span>
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Intitulé</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Intitulé de la conférence" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <fieldset disabled={!canEdit} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Intitulé</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Intitulé de la conférence" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="room"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Salle</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={(value: string) => field.onChange(value)}
-                      value={field.value}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Salles" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {rooms.map((room: Room) => (
-                          <SelectItem key={room.id} value={room.id}>
-                            {room.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="subject"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Sujet</FormLabel>
+                    <FormControl>
+                      <Select
+                        disabled={!canEdit}
+                        onValueChange={(value: string) => field.onChange(value)}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Sujet de la conférence" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {subjects.map(([subject, label]) => (
+                            <SelectItem key={subject} value={subject}>
+                              {label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="start"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Date de début</FormLabel>
-                  <FormControl>
-                    <DateTimePicker field={field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Description</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Description de la conférence" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="end"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Date de fin</FormLabel>
-                  <FormControl>
-                    <DateTimePicker field={field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="roomId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Salle</FormLabel>
+                    <FormControl>
+                      <Select
+                        disabled={!canEdit}
+                        onValueChange={(value: string) => field.onChange(value)}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Sélectionner une salle" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {rooms.map((room: Room) => (
+                            <SelectItem key={room.id} value={room.id}>
+                              {room.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="startTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Date de début</FormLabel>
+                    <FormControl>
+                      <DateTimePicker field={field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="endTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Date de fin</FormLabel>
+                    <FormControl>
+                      <DateTimePicker field={field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="level"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Niveau</FormLabel>
+                    <FormControl>
+                      <Select
+                        disabled={!canEdit}
+                        onValueChange={(value: string) => field.onChange(value)}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Niveau de la conférence" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {levels.map(([level, label]) => (
+                            <SelectItem key={level} value={level}>
+                              {label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </fieldset>
 
             <DialogFooter className="flex justify-between gap-2">
               {!user && selectedEvent && (
@@ -222,53 +322,14 @@ export default function CalendarManageEventDialog() {
                   <CalendarFavorite eventId={selectedEvent.id} />
                 </div>
               )}
+
               {selectedEvent &&
                 selectedEvent.status === "PENDING_APPROVAL" &&
-                hasRole("PLANNER") && (
-                  <>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="success" type="button">
-                          Approuver
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Approuver une conférence</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Êtes-vous sûr de vouloir approuver la conférence ? Cette action ne peut
-                            pas être annulée.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Annuler</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleApprove}>Approuver</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="destructive" type="button">
-                          Rejeter
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Rejeter une conférence</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Êtes-vous sûr de vouloir rejeter la conférence ? Cette action ne peut
-                            pas être annulée.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Annuler</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleReject}>Rejeter</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </>
-                )}
-              <Button type="submit">Mettre à jour</Button>
+                hasRole("PLANNER") && <CalendarActions handleClose={handleClose} />}
+
+              <Button type="submit" disabled={!canEdit}>
+                Mettre à jour
+              </Button>
             </DialogFooter>
           </form>
         </Form>

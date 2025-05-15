@@ -62,7 +62,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="calendar@hetic.net"
                   required
                   {...register("email")}
                 />

@@ -9,7 +9,7 @@ import CalendarHeaderActionsLogout from "@/components/calendar/header/actions/ca
 import CalendarHeaderActionsLogin from "@/components/calendar/header/actions/calendar-header-actions-login";
 import CalendarProvider from "@/components/calendar/calendar-provider";
 import { useStore } from "@/store/store";
-import CalendarHeaderActionsFilters from "./header/actions/calendar-header-actions-filters";
+import CalendarHeaderActionsFilters from "@/components/calendar/header/actions/calendar-header-actions-filters";
 
 export default function Calendar({
   events,
