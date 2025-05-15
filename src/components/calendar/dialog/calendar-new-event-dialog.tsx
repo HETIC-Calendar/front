@@ -24,20 +24,35 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { createTalk, fetchRooms } from "@/lib/api";
-import type { Room, TalkLevel, TalkStatus, TalkSubject } from "@/lib/types";
+import { TALK_LEVEL_LABELS, TALK_SUBJECT_LABELS, type Room } from "@/lib/types";
 import { loadEvents } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z
   .object({
     title: z.string().min(1, "L'intitulé est requis"),
-    room: z.string().min(1, "La salle est requise"),
-    start: z.string().datetime({ message: "Date de début invalide" }),
-    end: z.string().datetime({ message: "Date de fin invalide" })
+    subject: z.enum([
+      "AI",
+      "WEB_DEVELOPMENT",
+      "MOBILE_DEVELOPMENT",
+      "DATA_SCIENCE",
+      "CLOUD_COMPUTING",
+      "DEVOPS",
+      "CYBER_SECURITY",
+      "BLOCKCHAIN",
+      "IOT",
+      "GAME_DEVELOPMENT"
+    ]),
+    description: z.string().min(2, "La description doit contenir au moins 2 caractères"),
+    roomId: z.string().min(1, "La salle est requise"),
+    startTime: z.string().datetime({ message: "Date de début invalide" }),
+    endTime: z.string().datetime({ message: "Date de fin invalide" }),
+    level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"])
   })
   .refine(
     (data) => {
-      const start = new Date(data.start);
-      const end = new Date(data.end);
+      const start = new Date(data.startTime);
+      const end = new Date(data.endTime);
       return end >= start;
     },
     {
@@ -45,6 +60,9 @@ const formSchema = z
       path: ["end"]
     }
   );
+
+const subjects = Object.entries(TALK_SUBJECT_LABELS);
+const levels = Object.entries(TALK_LEVEL_LABELS);
 
 export default function CalendarNewEventDialog() {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -62,23 +80,24 @@ export default function CalendarNewEventDialog() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      room: "",
-      start: format(date, "yyyy-MM-dd'T'HH:mm"),
-      end: format(date, "yyyy-MM-dd'T'HH:mm")
+      subject: undefined,
+      description: "",
+      roomId: "",
+      level: undefined,
+      startTime: format(date, "yyyy-MM-dd'T'HH:mm"),
+      endTime: format(date, "yyyy-MM-dd'T'HH:mm")
     }
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const newEvent = {
       title: values.title,
-      subject: "AI" as TalkSubject,
-      description: "Description of the talk",
-      speaker: "Speaker Name",
-      roomId: values.room,
-      level: "BEGINNER" as TalkLevel,
-      status: "APPROVED" as TalkStatus,
-      startTime: new Date(values.start),
-      endTime: new Date(values.end)
+      subject: values.subject,
+      description: values.description,
+      roomId: values.roomId,
+      level: values.level,
+      startTime: new Date(values.startTime),
+      endTime: new Date(values.endTime)
     };
 
     await createTalk(newEvent);
@@ -112,7 +131,49 @@ export default function CalendarNewEventDialog() {
 
             <FormField
               control={form.control}
-              name="room"
+              name="subject"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-bold">Sujet</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value: string) => field.onChange(value)}
+                      value={field.value}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Sujet de la conférence" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {subjects.map(([subject, label]) => (
+                          <SelectItem key={subject} value={subject}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-bold">Description</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Description de la conférence" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="roomId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="font-bold">Salle</FormLabel>
@@ -122,7 +183,7 @@ export default function CalendarNewEventDialog() {
                       value={field.value}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Salles" />
+                        <SelectValue placeholder="Sélectionner une salle" />
                       </SelectTrigger>
                       <SelectContent>
                         {rooms.map((room: Room) => (
@@ -140,7 +201,7 @@ export default function CalendarNewEventDialog() {
 
             <FormField
               control={form.control}
-              name="start"
+              name="startTime"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="font-bold">Date de début</FormLabel>
@@ -154,12 +215,40 @@ export default function CalendarNewEventDialog() {
 
             <FormField
               control={form.control}
-              name="end"
+              name="endTime"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="font-bold">Date de fin</FormLabel>
                   <FormControl>
                     <DateTimePicker field={field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="level"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-bold">Niveau</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value: string) => field.onChange(value)}
+                      value={field.value}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Niveau de la conférence" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {levels.map(([level, label]) => (
+                          <SelectItem key={level} value={level}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -3,6 +3,7 @@ import { format, isSameDay } from "date-fns";
 import { cn, getTalkColor } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import type { Talk } from "@/lib/types";
+import { TALK_SUBJECT_LABELS } from "@/lib/types";
 
 interface EventPosition {
   left: string;
@@ -105,7 +106,7 @@ export default function CalendarEvent({
                 month && "hidden"
               )}
             >
-              {event.subject}
+              {TALK_SUBJECT_LABELS[event.subject]}
             </Badge>
           </div>
         </div>
