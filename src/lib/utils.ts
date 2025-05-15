@@ -21,8 +21,8 @@ export const getTalkColor = (status: TalkStatus) => {
   }
 };
 
-export const loadEvents = async (setEvents: (events: Talk[]) => void) => {
-  const eventsData = await fetchTalks();
+export const loadEvents = async (setEvents: (events: Talk[]) => void, status?: TalkStatus) => {
+  const eventsData = await fetchTalks(status);
   setEvents(eventsData);
 };
 

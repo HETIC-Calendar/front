@@ -9,8 +9,10 @@ import Register from "@/pages/Register";
 import { AuthProvider } from "@/components/authentication/auth-provider";
 import type { Talk, TalkSubject, TalkLevel } from "@/lib/types";
 import { loadEvents } from "@/lib/utils";
+import { useStore } from "@/store/store";
 
 function App() {
+  const { user } = useStore();
   const [events, setEvents] = useState<Talk[]>([]);
   const [mode, setMode] = useState<Mode>("month");
   const [date, setDate] = useState<Date>(new Date());
@@ -25,8 +27,8 @@ function App() {
   });
 
   useEffect(() => {
-    loadEvents(setEvents);
-  }, []);
+    loadEvents(setEvents, !user ? "APPROVED" : undefined);
+  }, [user]);
 
   return (
     <AuthProvider>

@@ -1,4 +1,4 @@
-import type { Room, Talk } from "@/lib/types";
+import type { Room, Talk, TalkStatus } from "@/lib/types";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -19,6 +19,12 @@ export async function apiFetch<T>(
     headers,
     body: JSON.stringify(body)
   });
+
+  if (response.status === 401) {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+    throw new Error("Unauthorized");
+  }
 
   if (!response.ok) {
     throw new Error(`API error: ${response.status} ${response.statusText}`);
@@ -76,8 +82,8 @@ export const fetchRooms = async () => {
   return result.rooms;
 };
 
-export const fetchTalks = async () => {
-  const result = await apiGet<{ talks: Talk[] }>("/talks");
+export const fetchTalks = async (status?: TalkStatus) => {
+  const result = await apiGet<{ talks: Talk[] }>(`/talks${status ? `?status=${status}` : ""}`);
   return result.talks;
 };
 
