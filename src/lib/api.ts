@@ -88,7 +88,9 @@ export const fetchTalks = async (status?: TalkStatus) => {
 };
 
 export const createTalk = async (
-  talk: Omit<Talk, "id" | "room" | "createdAt" | "updatedAt"> & { roomId: string }
+  talk: Omit<Talk, "id" | "room" | "speaker" | "status" | "createdAt" | "updatedAt"> & {
+    roomId: string;
+  }
 ) => {
   await apiPost<{ talk: Talk }>("/talks", talk);
 };

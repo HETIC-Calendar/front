@@ -18,7 +18,7 @@ export interface Talk {
   title: string;
   subject: TalkSubject;
   description: string;
-  speaker: string;
+  speaker: User;
   room: Room;
   level: TalkLevel;
   startTime: Date;
