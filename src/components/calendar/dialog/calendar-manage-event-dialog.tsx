@@ -136,7 +136,7 @@ export default function CalendarManageEventDialog() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!selectedEvent) return;
 
-    const newEvent = {
+    const updatedEvent = {
       title: values.title,
       subject: values.subject,
       description: values.description,
@@ -146,11 +146,14 @@ export default function CalendarManageEventDialog() {
       level: values.level
     };
 
-    await editTalk(selectedEvent.id, newEvent);
-    await loadEvents(setEvents);
-
-    toast.success("La conférence a bien été mise à jour");
-    handleClose();
+    try {
+      await editTalk(selectedEvent.id, updatedEvent);
+      await loadEvents(setEvents);
+      toast.success("La conférence a bien été mise à jour");
+      handleClose();
+    } catch {
+      toast.error("Vous ne pouvez pas modifier cette conférence à cette horaire");
+    }
   }
 
   function handleClose() {

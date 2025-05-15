@@ -27,6 +27,7 @@ import { createTalk, fetchRooms } from "@/lib/api";
 import { TALK_LEVEL_LABELS, TALK_SUBJECT_LABELS, type Room } from "@/lib/types";
 import { loadEvents } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 const formSchema = z
   .object({
@@ -103,11 +104,14 @@ export default function CalendarNewEventDialog() {
       level: values.level
     };
 
-    await createTalk(newEvent);
-    await loadEvents(setEvents);
-
-    setNewEventDialogOpen(false);
-    form.reset();
+    try {
+      await createTalk(newEvent);
+      await loadEvents(setEvents);
+      setNewEventDialogOpen(false);
+      form.reset();
+    } catch {
+      toast.error("Vous ne pouvez pas proposer une conférence à cette horaire");
+    }
   }
 
   return (
