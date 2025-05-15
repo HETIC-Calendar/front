@@ -14,7 +14,7 @@ import { register } from "@/lib/auth";
 
 const formSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6)
+  password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères")
 });
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
