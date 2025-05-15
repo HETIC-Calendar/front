@@ -37,6 +37,8 @@ import CalendarActions from "@/components/calendar/dialog/calendar-actions";
 import { loadEvents } from "@/lib/utils";
 import { useStore } from "@/store/store";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import CalendarDelete from "./calendar-delete";
 
 const formSchema = z
   .object({
@@ -147,6 +149,7 @@ export default function CalendarManageEventDialog() {
     await editTalk(selectedEvent.id, newEvent);
     await loadEvents(setEvents);
 
+    toast.success("La conférence a bien été mise à jour");
     handleClose();
   }
 
@@ -317,19 +320,27 @@ export default function CalendarManageEventDialog() {
             </fieldset>
 
             <DialogFooter className="flex justify-between gap-2">
-              {!user && selectedEvent && (
-                <div className="mr-auto">
-                  <CalendarFavorite eventId={selectedEvent.id} />
-                </div>
+              {selectedEvent && (
+                <>
+                  <div className="mr-auto">
+                    {!user ? (
+                      <CalendarFavorite eventId={selectedEvent.id} />
+                    ) : (
+                      <Button type="submit" disabled={!canEdit}>
+                        Mettre à jour
+                      </Button>
+                    )}
+                  </div>
+                  {hasRole("PLANNER") && (
+                    <>
+                      <CalendarDelete handleClose={handleClose} />
+                      {selectedEvent.status === "PENDING_APPROVAL" && (
+                        <CalendarActions handleClose={handleClose} />
+                      )}
+                    </>
+                  )}
+                </>
               )}
-
-              {selectedEvent &&
-                selectedEvent.status === "PENDING_APPROVAL" &&
-                hasRole("PLANNER") && <CalendarActions handleClose={handleClose} />}
-
-              <Button type="submit" disabled={!canEdit}>
-                Mettre à jour
-              </Button>
             </DialogFooter>
           </form>
         </Form>
