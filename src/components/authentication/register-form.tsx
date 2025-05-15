@@ -36,8 +36,8 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
       await register(data.email, data.password);
       toast("Utilisateur enregistré avec succès");
       navigate("/login");
-    } catch (error) {
-      console.error(error);
+    } catch {
+      toast.error("Erreur lors de la création de l'utilisateur");
     }
   };
 

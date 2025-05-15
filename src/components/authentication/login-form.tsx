@@ -40,10 +40,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       const decoded: User = jwtDecode(token);
       useStore.getState().setUser(decoded);
 
-      toast.success("Vous êtes connecté avec succès");
+      toast.success("Connexion avec succès");
       navigate("/");
-    } catch (error) {
-      console.error(error);
+    } catch {
+      toast.error("Erreur lors de la connexion de l'utilisateur");
     }
   };
 
