@@ -25,7 +25,7 @@ const CalendarFavorite = ({ eventId }: { eventId: string }) => {
       <HeartIcon
         className={`h-6 w-6 ${isFavourited ? "fill-primary" : "fill-muted stroke-muted-foreground"}`}
       />
-      <p>{isFavourited ? "Remove from favorites" : "Add to favorites"}</p>
+      <p>{isFavourited ? "Enlever des favoris" : "Ajouter aux favoris"}</p>
     </Button>
   );
 };
