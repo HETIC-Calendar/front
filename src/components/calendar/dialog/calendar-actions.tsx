@@ -2,17 +2,8 @@ import { useCalendarContext } from "@/components/calendar/calendar-context";
 import { loadEvents } from "@/lib/utils";
 import { approveTalk, rejectTalk } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
+import { Check as CheckIcon, X as XIcon } from "lucide-react";
+import { toast } from "sonner";
 
 const CalendarActions = ({ handleClose }: { handleClose: () => void }) => {
   const { selectedEvent, setEvents } = useCalendarContext();
@@ -21,6 +12,7 @@ const CalendarActions = ({ handleClose }: { handleClose: () => void }) => {
     if (!selectedEvent) return;
     await approveTalk(selectedEvent.id);
     await loadEvents(setEvents);
+    toast.success("La conférence a bien été approuvée");
     handleClose();
   }
 
@@ -28,51 +20,18 @@ const CalendarActions = ({ handleClose }: { handleClose: () => void }) => {
     if (!selectedEvent) return;
     await rejectTalk(selectedEvent.id);
     await loadEvents(setEvents);
+    toast.success("La conférence a bien été rejetée");
     handleClose();
   }
 
   return (
     <>
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button variant="success" type="button">
-            Approuver
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Approuver une conférence</AlertDialogTitle>
-            <AlertDialogDescription>
-              Êtes-vous sûr de vouloir approuver la conférence ? Cette action ne peut pas être
-              annulée.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleApprove}>Approuver</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button variant="destructive" type="button">
-            Rejeter
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Rejeter une conférence</AlertDialogTitle>
-            <AlertDialogDescription>
-              Êtes-vous sûr de vouloir rejeter la conférence ? Cette action ne peut pas être
-              annulée.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleReject}>Rejeter</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <Button variant="success" type="button" onClick={handleApprove}>
+        <CheckIcon />
+      </Button>
+      <Button variant="destructive" type="button" onClick={handleReject}>
+        <XIcon />
+      </Button>
     </>
   );
 };
