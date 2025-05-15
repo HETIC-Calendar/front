@@ -1,3 +1,6 @@
+import { toast } from "sonner";
+import { deleteTalk } from "@/lib/api";
+import { loadEvents } from "@/lib/utils";
 import { useCalendarContext } from "@/components/calendar/calendar-context";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,14 +14,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
 
 const CalendarDelete = ({ handleClose }: { handleClose: () => void }) => {
-  const { selectedEvent } = useCalendarContext();
+  const { selectedEvent, setEvents } = useCalendarContext();
 
   async function handleDelete() {
     if (!selectedEvent) return;
-    toast.error("La fonctionnalité de suppression n'est pas encore disponible");
+    await deleteTalk(selectedEvent.id);
+    await loadEvents(setEvents);
+    toast.success("La conférence a été supprimée avec succès");
     handleClose();
   }
 
