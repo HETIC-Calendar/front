@@ -88,11 +88,26 @@ export default function CalendarEvent({
       >
         <div className="flex flex-wrap items-center gap-x-2">
           <p className={cn("truncate font-bold", month && "text-xs")}>{event.title}</p>
-          <Badge
-            className={cn(`bg-${getTalkColor(event.status)}-500`, "max-w-full", month && "hidden")}
-          >
-            {event.room.name}
-          </Badge>
+          <div className="flex flex-wrap gap-1">
+            <Badge
+              className={cn(
+                `bg-${getTalkColor(event.status)}-500`,
+                "max-w-full",
+                month && "hidden"
+              )}
+            >
+              {event.room.name}
+            </Badge>
+            <Badge
+              className={cn(
+                `bg-${getTalkColor(event.status)}-500`,
+                "max-w-full",
+                month && "hidden"
+              )}
+            >
+              {event.subject}
+            </Badge>
+          </div>
         </div>
         <p className={cn("text-sm", month && "text-xs")}>
           <span>{format(event.startTime, "H:mm")}</span>
