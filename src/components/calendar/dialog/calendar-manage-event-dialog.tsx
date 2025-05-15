@@ -40,8 +40,10 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { fetchRooms } from "@/lib/api";
+import { approveTalk, fetchRooms, rejectTalk } from "@/lib/api";
 import type { Room } from "@/lib/types";
+import { loadEvents } from "@/lib/utils";
+import { useStore } from "@/store/store";
 
 const formSchema = z
   .object({
@@ -71,13 +73,13 @@ const formSchema = z
   );
 
 export default function CalendarManageEventDialog() {
-  const [rooms, setRooms] = useState([]);
+  const { hasRole } = useStore();
+  const [rooms, setRooms] = useState<Room[]>([]);
   const {
     manageEventDialogOpen,
     setManageEventDialogOpen,
     selectedEvent,
     setSelectedEvent,
-    events,
     setEvents
   } = useCalendarContext();
 
@@ -103,31 +105,29 @@ export default function CalendarManageEventDialog() {
     if (selectedEvent) {
       form.reset({
         title: selectedEvent.title,
-        room: selectedEvent.room,
-        start: format(selectedEvent.start, "yyyy-MM-dd'T'HH:mm"),
-        end: format(selectedEvent.end, "yyyy-MM-dd'T'HH:mm")
+        room: selectedEvent.room.id,
+        start: format(selectedEvent.startTime, "yyyy-MM-dd'T'HH:mm"),
+        end: format(selectedEvent.endTime, "yyyy-MM-dd'T'HH:mm")
       });
     }
   }, [selectedEvent, form]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit() {
     if (!selectedEvent) return;
-
-    const updatedEvent = {
-      ...selectedEvent,
-      title: values.title,
-      room: values.room,
-      start: new Date(values.start),
-      end: new Date(values.end)
-    };
-
-    setEvents(events.map((event) => (event.id === selectedEvent.id ? updatedEvent : event)));
     handleClose();
   }
 
-  function handleDelete() {
+  async function handleApprove() {
     if (!selectedEvent) return;
-    setEvents(events.filter((event) => event.id !== selectedEvent.id));
+    await approveTalk(selectedEvent.id);
+    await loadEvents(setEvents);
+    handleClose();
+  }
+
+  async function handleReject() {
+    if (!selectedEvent) return;
+    await rejectTalk(selectedEvent.id);
+    await loadEvents(setEvents);
     handleClose();
   }
 
@@ -166,7 +166,10 @@ export default function CalendarManageEventDialog() {
                 <FormItem>
                   <FormLabel className="font-bold">Salle</FormLabel>
                   <FormControl>
-                    <Select onValueChange={(value) => field.onChange(value)} value={field.value}>
+                    <Select
+                      onValueChange={(value: string) => field.onChange(value)}
+                      value={field.value}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Salles" />
                       </SelectTrigger>
@@ -213,26 +216,52 @@ export default function CalendarManageEventDialog() {
             />
 
             <DialogFooter className="flex justify-between gap-2">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive" type="button">
-                    Supprimer
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Supprimer une conférence</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Êtes-vous sûr de vouloir supprimer la conférence ? Cette action ne peut pas
-                      être annulée.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Annuler</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>Supprimer</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              {selectedEvent &&
+                selectedEvent.status === "PENDING_APPROVAL" &&
+                hasRole("PLANNER") && (
+                  <>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="success" type="button">
+                          Approuver
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Approuver une conférence</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Êtes-vous sûr de vouloir approuver la conférence ? Cette action ne peut
+                            pas être annulée.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Annuler</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleApprove}>Approuver</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" type="button">
+                          Rejeter
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Rejeter une conférence</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Êtes-vous sûr de vouloir rejeter la conférence ? Cette action ne peut
+                            pas être annulée.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Annuler</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleReject}>Rejeter</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </>
+                )}
               <Button type="submit">Mettre à jour</Button>
             </DialogFooter>
           </form>

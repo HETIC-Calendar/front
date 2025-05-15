@@ -23,8 +23,9 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { fetchRooms } from "@/lib/api";
-import type { Room } from "@/lib/types";
+import { createTalk, fetchRooms } from "@/lib/api";
+import type { Room, TalkLevel, TalkStatus, TalkSubject } from "@/lib/types";
+import { loadEvents } from "@/lib/utils";
 
 const formSchema = z
   .object({
@@ -46,9 +47,8 @@ const formSchema = z
   );
 
 export default function CalendarNewEventDialog() {
-  const [rooms, setRooms] = useState([]);
-  const { newEventDialogOpen, setNewEventDialogOpen, date, events, setEvents } =
-    useCalendarContext();
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const { newEventDialogOpen, setNewEventDialogOpen, date, setEvents } = useCalendarContext();
 
   useEffect(() => {
     const loadRooms = async () => {
@@ -68,18 +68,22 @@ export default function CalendarNewEventDialog() {
     }
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     const newEvent = {
-      id: crypto.randomUUID(),
       title: values.title,
-      status: "PENDING_APPROVAL",
-      room: values.room,
-      start: new Date(values.start),
-      end: new Date(values.end),
-      color: "orange"
+      subject: "AI" as TalkSubject,
+      description: "Description of the talk",
+      speaker: "Speaker Name",
+      roomId: values.room,
+      level: "BEGINNER" as TalkLevel,
+      status: "APPROVED" as TalkStatus,
+      startTime: new Date(values.start),
+      endTime: new Date(values.end)
     };
 
-    setEvents([...events, newEvent]);
+    await createTalk(newEvent);
+    await loadEvents(setEvents);
+
     setNewEventDialogOpen(false);
     form.reset();
   }
@@ -88,7 +92,7 @@ export default function CalendarNewEventDialog() {
     <Dialog open={newEventDialogOpen} onOpenChange={setNewEventDialogOpen}>
       <DialogContent aria-describedby={undefined}>
         <DialogHeader>
-          <DialogTitle>Créer une conférence</DialogTitle>
+          <DialogTitle>Proposer une conférence</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -113,7 +117,10 @@ export default function CalendarNewEventDialog() {
                 <FormItem>
                   <FormLabel className="font-bold">Salle</FormLabel>
                   <FormControl>
-                    <Select onValueChange={(value) => field.onChange(value)} value={field.value}>
+                    <Select
+                      onValueChange={(value: string) => field.onChange(value)}
+                      value={field.value}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Salles" />
                       </SelectTrigger>
@@ -160,7 +167,7 @@ export default function CalendarNewEventDialog() {
             />
 
             <div className="flex justify-end">
-              <Button type="submit">Créer la conférence</Button>
+              <Button type="submit">Proposer la conférence</Button>
             </div>
           </form>
         </Form>

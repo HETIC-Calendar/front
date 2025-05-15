@@ -1,8 +1,9 @@
 import { CalendarContext } from "@/components/calendar/calendar-context";
-import type { CalendarEvent, Mode } from "@/components/calendar/calendar-types";
+import type { Mode } from "@/components/calendar/calendar-types";
 import { useState } from "react";
 import CalendarNewEventDialog from "@/components/calendar/dialog/calendar-new-event-dialog";
 import CalendarManageEventDialog from "@/components/calendar/dialog/calendar-manage-event-dialog";
+import type { Talk } from "@/lib/types";
 
 export default function CalendarProvider({
   events,
@@ -14,8 +15,8 @@ export default function CalendarProvider({
   calendarIconIsToday = true,
   children
 }: {
-  events: CalendarEvent[];
-  setEvents: (events: CalendarEvent[]) => void;
+  events: Talk[];
+  setEvents: (events: Talk[]) => void;
   mode: Mode;
   setMode: (mode: Mode) => void;
   date: Date;
@@ -25,7 +26,7 @@ export default function CalendarProvider({
 }) {
   const [newEventDialogOpen, setNewEventDialogOpen] = useState(false);
   const [manageEventDialogOpen, setManageEventDialogOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Talk | null>(null);
 
   return (
     <CalendarContext.Provider

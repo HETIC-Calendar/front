@@ -5,7 +5,10 @@ import CalendarHeaderActions from "@/components/calendar/header/actions/calendar
 import CalendarHeaderDate from "@/components/calendar/header/date/calendar-header-date";
 import CalendarHeaderActionsMode from "@/components/calendar/header/actions/calendar-header-actions-mode";
 import CalendarHeaderActionsAdd from "@/components/calendar/header/actions/calendar-header-actions-add";
+import CalendarHeaderActionsLogout from "@/components/calendar/header/actions/calendar-header-actions-logout";
+import CalendarHeaderActionsLogin from "@/components/calendar/header/actions/calendar-header-actions-login";
 import CalendarProvider from "@/components/calendar/calendar-provider";
+import { useStore } from "@/store/store";
 
 export default function Calendar({
   events,
@@ -16,6 +19,8 @@ export default function Calendar({
   setDate,
   calendarIconIsToday = true
 }: CalendarProps) {
+  const { user, hasRole } = useStore();
+
   return (
     <CalendarProvider
       events={events}
@@ -30,7 +35,8 @@ export default function Calendar({
         <CalendarHeaderDate />
         <CalendarHeaderActions>
           <CalendarHeaderActionsMode />
-          <CalendarHeaderActionsAdd />
+          {hasRole("SPEAKER") && <CalendarHeaderActionsAdd />}
+          {user ? <CalendarHeaderActionsLogout /> : <CalendarHeaderActionsLogin />}
         </CalendarHeaderActions>
       </CalendarHeader>
       <CalendarBody />

@@ -38,14 +38,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       localStorage.setItem("token", token);
 
       const decoded: User = jwtDecode(token);
-      // TODO: when the api is ready, remove the role
-      useStore.getState().setUser({ ...decoded, role: "talker" });
+      useStore.getState().setUser(decoded);
 
-      toast("Bienvenue!");
-      if (decoded.role === "organizer") {
-        navigate("/dashboard-organizer");
-      }
-      navigate("/dashboard-talker");
+      toast.success("Vous êtes connecté avec succès");
+      navigate("/");
     } catch (error) {
       console.error(error);
     }

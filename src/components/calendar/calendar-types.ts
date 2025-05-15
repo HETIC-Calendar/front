@@ -1,6 +1,8 @@
+import type { Talk } from "@/lib/types";
+
 export type CalendarProps = {
-  events: CalendarEvent[];
-  setEvents: (events: CalendarEvent[]) => void;
+  events: Talk[];
+  setEvents: (events: Talk[]) => void;
   mode: Mode;
   setMode: (mode: Mode) => void;
   date: Date;
@@ -13,18 +15,8 @@ export type CalendarContextType = CalendarProps & {
   setNewEventDialogOpen: (open: boolean) => void;
   manageEventDialogOpen: boolean;
   setManageEventDialogOpen: (open: boolean) => void;
-  selectedEvent: CalendarEvent | null;
-  setSelectedEvent: (event: CalendarEvent | null) => void;
-};
-
-export type CalendarEvent = {
-  id: string;
-  title: string;
-  status: string;
-  room: string;
-  color: string;
-  start: Date;
-  end: Date;
+  selectedEvent: Talk | null;
+  setSelectedEvent: (event: Talk | null) => void;
 };
 
 export const calendarModes = ["day", "week", "month"] as const;
