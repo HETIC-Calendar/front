@@ -1,13 +1,13 @@
-# HETIC Calendar - Front-ed
+# HETIC Calendar : Front-end
 
-## Commands
+## Scripts
 
 ### Installation
 
 - `nvm use` : use right node version
 - `pnpm i` : install deps
 
-### Developpement
+### Development
 
 - `pnpm dev` : launch dev server
 
@@ -16,7 +16,7 @@
 - `pnpm build` : build app
 - `pnpm preview` : launch preview server
 
-### Others
+### Misc
 
 - `pnpm prepare` : use husky
 - `pnpm lint` : linter
@@ -25,26 +25,27 @@
 ## Structure
 
 ```
-├── README.md
-├── config.js
-├── components.json
 ├── dist
-├── index.html
-├── package.json
-├── pnpm.yaml
-├── public
-│   └── favicon.svg
+├── node_modules
 ├── src
-│   ├── App.tsx
 │   ├── components
 │   │   ├── component (custom)
 │   │       └── part.tsx
 │   │   └── ui (shadcn)
 │   │       └── component.tsx
-│   ├── index.css
 │   ├── lib
 │   │   └── utils.ts
+│   ├── App.tsx
+│   ├── index.css
 │   ├── main.tsx
 │   └── vite-env.d.ts
-└── tsconfig.json
+├── public
+│   └── favicon.svg
+├── index.html
+├── pnpm-*.yaml
+├── *.config.js
+├── tsconfig.*.json
+├── components.json
+├── package.json
+└── README.md
 ```

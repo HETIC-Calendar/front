@@ -1,13 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Calendar from "@/components/calendar/calendar";
-import type { CalendarEvent, Mode } from "./components/calendar/calendar-types";
+import type { CalendarEvent, Mode } from "@/components/calendar/calendar-types";
+import { fetchTalks } from "@/lib/api";
 
 function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [mode, setMode] = useState<Mode>("month");
   const [date, setDate] = useState<Date>(new Date());
+
+  useEffect(() => {
+    const loadEvents = async () => {
+      const eventsData = await fetchTalks();
+      setEvents(eventsData);
+    };
+    loadEvents();
+  }, []);
 
   return (
     <Calendar

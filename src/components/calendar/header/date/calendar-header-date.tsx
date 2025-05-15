@@ -1,8 +1,8 @@
-import { useCalendarContext } from "../../calendar-context";
+import { useCalendarContext } from "@/components/calendar/calendar-context";
 import { format } from "date-fns";
-import CalendarHeaderDateIcon from "./calendar-header-date-icon";
-import CalendarHeaderDateChevrons from "./calendar-header-date-chevrons";
-import CalendarHeaderDateBadge from "./calendar-header-date-badge";
+import CalendarHeaderDateIcon from "@/components/calendar/header/date/calendar-header-date-icon";
+import CalendarHeaderDateChevrons from "@/components/calendar/header/date/calendar-header-date-chevrons";
+import CalendarHeaderDateBadge from "@/components/calendar/header/date/calendar-header-date-badge";
 import { fr } from "date-fns/locale";
 
 export default function CalendarHeaderDate() {

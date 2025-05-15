@@ -2,6 +2,7 @@ import type { CalendarEvent as CalendarEventType } from "@/components/calendar/c
 import { useCalendarContext } from "@/components/calendar/calendar-context";
 import { format, isSameDay } from "date-fns";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface EventPosition {
   left: string;
@@ -89,7 +90,12 @@ export default function CalendarEvent({
           month && "flex-row items-center justify-between"
         )}
       >
-        <p className={cn("truncate font-bold", month && "text-xs")}>{event.title}</p>
+        <div className="flex flex-wrap items-center gap-x-2">
+          <p className={cn("truncate font-bold", month && "text-xs")}>{event.title}</p>
+          <Badge className={cn(`bg-${event.color}-500`, "max-w-full", month && "hidden")}>
+            {event.room}
+          </Badge>
+        </div>
         <p className={cn("text-sm", month && "text-xs")}>
           <span>{format(event.start, "H:mm")}</span>
           <span className={cn("mx-1", month && "hidden")}>-</span>

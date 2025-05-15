@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,10 +19,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useCalendarContext } from "../calendar-context";
+import { useCalendarContext } from "@/components/calendar/calendar-context";
 import { format } from "date-fns";
 import { DateTimePicker } from "@/components/form/date-time-picker";
-import { ColorPicker } from "@/components/form/color-picker";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,17 +33,26 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import { fetchRooms } from "@/lib/api";
+import type { Room } from "@/lib/types";
 
 const formSchema = z
   .object({
     title: z.string().min(1, "L'intitulé est requis"),
+    room: z.string().min(1, "La salle est requise"),
     start: z.string().refine((val) => !isNaN(Date.parse(val)), {
       message: "Date de début invalide"
     }),
     end: z.string().refine((val) => !isNaN(Date.parse(val)), {
       message: "Date de fin invalide"
-    }),
-    color: z.string()
+    })
   })
   .refine(
     (data) => {
@@ -63,6 +71,7 @@ const formSchema = z
   );
 
 export default function CalendarManageEventDialog() {
+  const [rooms, setRooms] = useState([]);
   const {
     manageEventDialogOpen,
     setManageEventDialogOpen,
@@ -72,13 +81,21 @@ export default function CalendarManageEventDialog() {
     setEvents
   } = useCalendarContext();
 
+  useEffect(() => {
+    const loadRooms = async () => {
+      const roomsData = await fetchRooms();
+      setRooms(roomsData);
+    };
+    loadRooms();
+  }, []);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
+      room: "",
       start: "",
-      end: "",
-      color: "blue"
+      end: ""
     }
   });
 
@@ -86,9 +103,9 @@ export default function CalendarManageEventDialog() {
     if (selectedEvent) {
       form.reset({
         title: selectedEvent.title,
+        room: selectedEvent.room,
         start: format(selectedEvent.start, "yyyy-MM-dd'T'HH:mm"),
-        end: format(selectedEvent.end, "yyyy-MM-dd'T'HH:mm"),
-        color: selectedEvent.color
+        end: format(selectedEvent.end, "yyyy-MM-dd'T'HH:mm")
       });
     }
   }, [selectedEvent, form]);
@@ -99,9 +116,9 @@ export default function CalendarManageEventDialog() {
     const updatedEvent = {
       ...selectedEvent,
       title: values.title,
+      room: values.room,
       start: new Date(values.start),
-      end: new Date(values.end),
-      color: values.color
+      end: new Date(values.end)
     };
 
     setEvents(events.map((event) => (event.id === selectedEvent.id ? updatedEvent : event)));
@@ -122,7 +139,7 @@ export default function CalendarManageEventDialog() {
 
   return (
     <Dialog open={manageEventDialogOpen} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>Modifier une conférence</DialogTitle>
         </DialogHeader>
@@ -136,6 +153,31 @@ export default function CalendarManageEventDialog() {
                   <FormLabel className="font-bold">Intitulé</FormLabel>
                   <FormControl>
                     <Input placeholder="Intitulé de la conférence" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="room"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-bold">Salle</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={(value) => field.onChange(value)} value={field.value}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Salles" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {rooms.map((room: Room) => (
+                          <SelectItem key={room.id} value={room.id}>
+                            {room.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -164,20 +206,6 @@ export default function CalendarManageEventDialog() {
                   <FormLabel className="font-bold">Date de fin</FormLabel>
                   <FormControl>
                     <DateTimePicker field={field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="color"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Couleur</FormLabel>
-                  <FormControl>
-                    <ColorPicker field={field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

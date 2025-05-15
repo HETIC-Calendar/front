@@ -1,10 +1,10 @@
 "use client";
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import type { Mode } from "../../calendar-types";
-import { calendarModes } from "../../calendar-types";
-import { useCalendarContext } from "../../calendar-context";
-import { calendarModeIconMap } from "../../calendar-mode-icon-map";
+import type { Mode } from "@/components/calendar/calendar-types";
+import { calendarModes } from "@/components/calendar/calendar-types";
+import { useCalendarContext } from "@/components/calendar/calendar-context";
+import { calendarModeIconMap } from "@/components/calendar/calendar-mode-icon-map";
 import { cn } from "@/lib/utils";
 
 export default function CalendarHeaderActionsMode() {
