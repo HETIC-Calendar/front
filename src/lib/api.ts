@@ -1,5 +1,5 @@
 import type { CalendarEvent } from "@/components/calendar/calendar-types";
-import type { Event } from "@/lib/types";
+import type { Talk } from "@/lib/types";
 import { getEventColor } from "./utils";
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -15,18 +15,18 @@ export const fetchRooms = async () => {
   return result.rooms;
 };
 
-export const fetchEvents = async () => {
+export const fetchTalks = async () => {
   const result = await fetchApi("talks");
   const formattedEvents: CalendarEvent[] = [];
-  result.talks.forEach((event: Event) => {
+  result.talks.forEach((talk: Talk) => {
     formattedEvents.push({
-      id: event.id,
-      title: event.title,
-      status: event.status,
-      room: event.roomId,
-      color: getEventColor(event.status),
-      start: new Date(event.startTime),
-      end: new Date(event.endTime)
+      id: talk.id,
+      title: talk.title,
+      status: talk.status,
+      room: talk.roomId,
+      color: getEventColor(talk.status),
+      start: new Date(talk.startTime),
+      end: new Date(talk.endTime)
     });
   });
   return formattedEvents;

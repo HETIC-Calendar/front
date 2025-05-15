@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Calendar from "@/components/calendar/calendar";
 import type { CalendarEvent, Mode } from "@/components/calendar/calendar-types";
-import { fetchEvents } from "@/lib/api";
+import { fetchTalks } from "@/lib/api";
 
 function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -12,7 +12,7 @@ function App() {
 
   useEffect(() => {
     const loadEvents = async () => {
-      const eventsData = await fetchEvents();
+      const eventsData = await fetchTalks();
       setEvents(eventsData);
     };
     loadEvents();
