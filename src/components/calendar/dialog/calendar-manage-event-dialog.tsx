@@ -40,8 +40,10 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { fetchRooms } from "@/lib/api";
+import { approveTalk, fetchRooms, rejectTalk } from "@/lib/api";
 import type { Room } from "@/lib/types";
+import { loadEvents } from "@/lib/utils";
+import { useStore } from "@/store/store";
 
 const formSchema = z
   .object({
@@ -71,13 +73,13 @@ const formSchema = z
   );
 
 export default function CalendarManageEventDialog() {
+  const { hasRole } = useStore();
   const [rooms, setRooms] = useState<Room[]>([]);
   const {
     manageEventDialogOpen,
     setManageEventDialogOpen,
     selectedEvent,
     setSelectedEvent,
-    events,
     setEvents
   } = useCalendarContext();
 
@@ -115,9 +117,17 @@ export default function CalendarManageEventDialog() {
     handleClose();
   }
 
-  function handleDelete() {
+  async function handleApprove() {
     if (!selectedEvent) return;
-    setEvents(events.filter((event) => event.id !== selectedEvent.id));
+    await approveTalk(selectedEvent.id);
+    await loadEvents(setEvents);
+    handleClose();
+  }
+
+  async function handleReject() {
+    if (!selectedEvent) return;
+    await rejectTalk(selectedEvent.id);
+    await loadEvents(setEvents);
     handleClose();
   }
 
@@ -206,26 +216,52 @@ export default function CalendarManageEventDialog() {
             />
 
             <DialogFooter className="flex justify-between gap-2">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive" type="button">
-                    Supprimer
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Supprimer une conférence</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Êtes-vous sûr de vouloir supprimer la conférence ? Cette action ne peut pas
-                      être annulée.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Annuler</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>Supprimer</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              {selectedEvent &&
+                selectedEvent.status === "PENDING_APPROVAL" &&
+                hasRole("PLANNER") && (
+                  <>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="success" type="button">
+                          Approuver
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Approuver une conférence</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Êtes-vous sûr de vouloir approuver la conférence ? Cette action ne peut
+                            pas être annulée.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Annuler</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleApprove}>Approuver</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" type="button">
+                          Rejeter
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Rejeter une conférence</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Êtes-vous sûr de vouloir rejeter la conférence ? Cette action ne peut
+                            pas être annulée.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Annuler</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleReject}>Rejeter</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </>
+                )}
               <Button type="submit">Mettre à jour</Button>
             </DialogFooter>
           </form>

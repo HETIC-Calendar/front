@@ -8,7 +8,6 @@ import CalendarHeaderActionsAdd from "@/components/calendar/header/actions/calen
 import CalendarHeaderActionsLogout from "@/components/calendar/header/actions/calendar-header-actions-logout";
 import CalendarHeaderActionsLogin from "@/components/calendar/header/actions/calendar-header-actions-login";
 import CalendarProvider from "@/components/calendar/calendar-provider";
-import ProtectedRoute from "@/components/authentication/protected-route";
 import { useStore } from "@/store/store";
 
 export default function Calendar({
@@ -20,7 +19,7 @@ export default function Calendar({
   setDate,
   calendarIconIsToday = true
 }: CalendarProps) {
-  const { user } = useStore();
+  const { user, hasRole } = useStore();
 
   return (
     <CalendarProvider
@@ -36,9 +35,7 @@ export default function Calendar({
         <CalendarHeaderDate />
         <CalendarHeaderActions>
           <CalendarHeaderActionsMode />
-          <ProtectedRoute requiredRole="talker">
-            <CalendarHeaderActionsAdd />
-          </ProtectedRoute>
+          {hasRole("SPEAKER") && <CalendarHeaderActionsAdd />}
           {user ? <CalendarHeaderActionsLogout /> : <CalendarHeaderActionsLogin />}
         </CalendarHeaderActions>
       </CalendarHeader>

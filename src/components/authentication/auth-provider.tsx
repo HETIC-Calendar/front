@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useStore } from "@/store/store";
 import { jwtDecode } from "jwt-decode";
+import type { User } from "@/lib/types";
 
 type AuthWrapperProps = {
   children: React.ReactNode;
@@ -13,7 +14,7 @@ export const AuthProvider = ({ children }: AuthWrapperProps) => {
     setAuthLoading(true);
     const token = localStorage.getItem("token");
     if (token) {
-      const decoded = jwtDecode<{ id: string; email: string; role: "organizer" | "talker" }>(token);
+      const decoded = jwtDecode<User>(token);
       setUser(decoded);
     }
     setAuthLoading(false);

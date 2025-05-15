@@ -23,6 +23,11 @@ export async function apiFetch<T>(
   if (!response.ok) {
     throw new Error(`API error: ${response.status} ${response.statusText}`);
   }
+
+  if (response.status === 204) {
+    return {} as T;
+  }
+
   return response.json() as T;
 }
 
@@ -80,4 +85,12 @@ export const createTalk = async (
   talk: Omit<Talk, "id" | "room" | "createdAt" | "updatedAt"> & { roomId: string }
 ) => {
   await apiPost<{ talk: Talk }>("/talks", talk);
+};
+
+export const rejectTalk = async (talkId: string) => {
+  await apiPost<{ talk: Talk }>(`/talks/${talkId}/approve-or-reject`, { isApproved: false });
+};
+
+export const approveTalk = async (talkId: string) => {
+  await apiPost<{ talk: Talk }>(`/talks/${talkId}/approve-or-reject`, { isApproved: true });
 };

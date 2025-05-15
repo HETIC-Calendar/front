@@ -1,8 +1,10 @@
 export type User = {
   id: string;
   email: string;
-  role: "organizer" | "talker";
+  type: UserType;
 };
+
+type UserType = "SPEAKER" | "PLANNER";
 
 export interface Room {
   id: string;
