@@ -24,10 +24,15 @@ export default function CalendarProvider({
   date: Date;
   setDate: (date: Date) => void;
   calendarIconIsToday: boolean;
-  filters: { selectedSubject: TalkSubject | null; selectedLevel: TalkLevel | null };
+  filters: {
+    selectedSubject: TalkSubject | null;
+    selectedLevel: TalkLevel | null;
+    byFavorites: boolean;
+  };
   setFilters: (filters: {
     selectedSubject: TalkSubject | null;
     selectedLevel: TalkLevel | null;
+    byFavorites: boolean;
   }) => void;
   children: React.ReactNode;
 }) {

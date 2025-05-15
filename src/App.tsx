@@ -17,9 +17,11 @@ function App() {
   const [filters, setFilters] = useState<{
     selectedSubject: TalkSubject | null;
     selectedLevel: TalkLevel | null;
+    byFavorites: boolean;
   }>({
     selectedSubject: null,
-    selectedLevel: null
+    selectedLevel: null,
+    byFavorites: false
   });
 
   useEffect(() => {

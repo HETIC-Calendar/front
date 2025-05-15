@@ -42,6 +42,8 @@ import {
 } from "@/components/ui/select";
 import { fetchRooms } from "@/lib/api";
 import type { Room } from "@/lib/types";
+import { useStore } from "@/store/store";
+import CalendarFavorite from "./calendar-favorite";
 
 const formSchema = z
   .object({
@@ -71,6 +73,7 @@ const formSchema = z
   );
 
 export default function CalendarManageEventDialog() {
+  const { user } = useStore();
   const [rooms, setRooms] = useState<Room[]>([]);
   const {
     manageEventDialogOpen,
@@ -216,6 +219,11 @@ export default function CalendarManageEventDialog() {
             />
 
             <DialogFooter className="flex justify-between gap-2">
+              {!user && selectedEvent && (
+                <div className="mr-auto">
+                  <CalendarFavorite eventId={selectedEvent.id} />
+                </div>
+              )}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive" type="button">

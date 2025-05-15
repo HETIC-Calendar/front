@@ -28,9 +28,13 @@ export const loadEvents = async (setEvents: (events: Talk[]) => void) => {
 
 export const getFilteredEvents = (
   talks: Talk[],
-  filters: { selectedSubject: TalkSubject | null; selectedLevel: TalkLevel | null }
+  filters: {
+    selectedSubject: TalkSubject | null;
+    selectedLevel: TalkLevel | null;
+    byFavorites: boolean;
+  }
 ) => {
-  if (filters.selectedSubject === null && filters.selectedLevel === null) {
+  if (filters.selectedSubject === null && filters.selectedLevel === null && !filters.byFavorites) {
     return talks;
   }
 
@@ -42,6 +46,14 @@ export const getFilteredEvents = (
 
   if (filters.selectedLevel !== null) {
     filteredTalks = filteredTalks.filter((talk) => talk.level === filters.selectedLevel);
+  }
+
+  if (filters.byFavorites) {
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    if (!favorites || favorites.length === 0) {
+      return [];
+    }
+    filteredTalks = filteredTalks.filter((talk) => favorites.includes(talk.id));
   }
 
   return filteredTalks;

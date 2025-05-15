@@ -5,15 +5,28 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { TalkSubject, TalkLevel } from "@/lib/types";
 import { TALK_SUBJECT_LABELS, TALK_LEVEL_LABELS } from "@/lib/types";
 import { useCalendarContext } from "@/components/calendar/calendar-context";
+import { Label } from "@/components/ui/label";
 
 export default function CalendarHeaderActionsFilters() {
   const { filters, setFilters } = useCalendarContext();
 
   return (
     <>
+      <Checkbox
+        id="favorites"
+        checked={filters.byFavorites}
+        onCheckedChange={(checked: boolean) => {
+          setFilters({
+            ...filters,
+            byFavorites: checked
+          });
+        }}
+      />
+      <Label htmlFor="favorites">Mes favoris</Label>
       <Select
         value={filters?.selectedLevel || "All"}
         onValueChange={(value) => {
