@@ -71,7 +71,7 @@ export async function apiPatch<T>(
 
 export async function apiDelete<T>(
   endpoint: string,
-  body: unknown,
+  body?: unknown,
   options: RequestInit = {}
 ): Promise<T> {
   return apiFetch<T>(endpoint, body, { ...options, method: "DELETE" });
@@ -102,6 +102,10 @@ export const editTalk = async (
   }
 ) => {
   await apiPost<{ talk: Talk }>(`/talks/${talkId}`, talk);
+};
+
+export const deleteTalk = async (talkId: string) => {
+  await apiDelete(`/talks/${talkId}`);
 };
 
 export const rejectTalk = async (talkId: string) => {
