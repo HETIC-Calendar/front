@@ -36,9 +36,9 @@ export default function Calendar({
         <CalendarHeaderDate />
         <CalendarHeaderActions>
           <CalendarHeaderActionsMode />
-          {/* <ProtectedRoute requiredRole="talker"> */}
-          <CalendarHeaderActionsAdd />
-          {/* </ProtectedRoute> */}
+          <ProtectedRoute requiredRole="talker">
+            <CalendarHeaderActionsAdd />
+          </ProtectedRoute>
           {user ? <CalendarHeaderActionsLogout /> : <CalendarHeaderActionsLogin />}
         </CalendarHeaderActions>
       </CalendarHeader>

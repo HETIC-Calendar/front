@@ -3,6 +3,7 @@ export type User = {
   email: string;
   role: "organizer" | "talker";
 };
+
 export interface Room {
   id: string;
   name: string;
@@ -16,7 +17,7 @@ export interface Talk {
   subject: TalkSubject;
   description: string;
   speaker: string;
-  roomId: string;
+  room: Room;
   level: TalkLevel;
   startTime: Date;
   endTime: Date;

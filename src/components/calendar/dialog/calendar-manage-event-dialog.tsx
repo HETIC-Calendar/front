@@ -103,25 +103,15 @@ export default function CalendarManageEventDialog() {
     if (selectedEvent) {
       form.reset({
         title: selectedEvent.title,
-        room: selectedEvent.roomId,
+        room: selectedEvent.room.id,
         start: format(selectedEvent.startTime, "yyyy-MM-dd'T'HH:mm"),
         end: format(selectedEvent.endTime, "yyyy-MM-dd'T'HH:mm")
       });
     }
   }, [selectedEvent, form]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit() {
     if (!selectedEvent) return;
-
-    const updatedEvent = {
-      ...selectedEvent,
-      title: values.title,
-      room: values.room,
-      start: new Date(values.start),
-      end: new Date(values.end)
-    };
-
-    setEvents(events.map((event) => (event.id === selectedEvent.id ? updatedEvent : event)));
     handleClose();
   }
 
