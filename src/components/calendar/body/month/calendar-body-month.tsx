@@ -10,12 +10,11 @@ import {
   format,
   isWithinInterval
 } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, getFilteredEvents } from "@/lib/utils";
 import CalendarEvent from "@/components/calendar/calendar-event";
 
 export default function CalendarBodyMonth() {
-  const { date, events, setDate, setMode } = useCalendarContext();
-
+  const { date, events, setDate, setMode, filters } = useCalendarContext();
   // Get the first day of the month
   const monthStart = startOfMonth(date);
   // Get the last day of the month
@@ -87,9 +86,11 @@ export default function CalendarBodyMonth() {
                 {format(day, "d")}
               </div>
               <div className="mt-1 flex flex-col gap-1">
-                {dayEvents.slice(0, 3).map((event) => (
-                  <CalendarEvent key={event.id} event={event} className="relative h-auto" month />
-                ))}
+                {getFilteredEvents(dayEvents, filters)
+                  .slice(0, 3)
+                  .map((event) => (
+                    <CalendarEvent key={event.id} event={event} className="relative h-auto" month />
+                  ))}
                 {dayEvents.length > 3 && (
                   <div
                     key={`more-${day.toISOString()}`}

@@ -1,8 +1,13 @@
-import type { Talk } from "@/lib/types";
+import type { Talk, TalkSubject, TalkLevel } from "@/lib/types";
 
 export type CalendarProps = {
   events: Talk[];
   setEvents: (events: Talk[]) => void;
+  filters: { selectedSubject: TalkSubject | null; selectedLevel: TalkLevel | null };
+  setFilters: (filters: {
+    selectedSubject: TalkSubject | null;
+    selectedLevel: TalkLevel | null;
+  }) => void;
   mode: Mode;
   setMode: (mode: Mode) => void;
   date: Date;

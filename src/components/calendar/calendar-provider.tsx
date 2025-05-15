@@ -3,7 +3,7 @@ import type { Mode } from "@/components/calendar/calendar-types";
 import { useState } from "react";
 import CalendarNewEventDialog from "@/components/calendar/dialog/calendar-new-event-dialog";
 import CalendarManageEventDialog from "@/components/calendar/dialog/calendar-manage-event-dialog";
-import type { Talk } from "@/lib/types";
+import type { Talk, TalkLevel, TalkSubject } from "@/lib/types";
 
 export default function CalendarProvider({
   events,
@@ -13,6 +13,8 @@ export default function CalendarProvider({
   date,
   setDate,
   calendarIconIsToday = true,
+  filters,
+  setFilters,
   children
 }: {
   events: Talk[];
@@ -22,6 +24,11 @@ export default function CalendarProvider({
   date: Date;
   setDate: (date: Date) => void;
   calendarIconIsToday: boolean;
+  filters: { selectedSubject: TalkSubject | null; selectedLevel: TalkLevel | null };
+  setFilters: (filters: {
+    selectedSubject: TalkSubject | null;
+    selectedLevel: TalkLevel | null;
+  }) => void;
   children: React.ReactNode;
 }) {
   const [newEventDialogOpen, setNewEventDialogOpen] = useState(false);
@@ -38,6 +45,8 @@ export default function CalendarProvider({
         date,
         setDate,
         calendarIconIsToday,
+        filters,
+        setFilters,
         newEventDialogOpen,
         setNewEventDialogOpen,
         manageEventDialogOpen,

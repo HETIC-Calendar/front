@@ -8,8 +8,8 @@ import CalendarHeaderActionsAdd from "@/components/calendar/header/actions/calen
 import CalendarHeaderActionsLogout from "@/components/calendar/header/actions/calendar-header-actions-logout";
 import CalendarHeaderActionsLogin from "@/components/calendar/header/actions/calendar-header-actions-login";
 import CalendarProvider from "@/components/calendar/calendar-provider";
-import ProtectedRoute from "@/components/authentication/protected-route";
 import { useStore } from "@/store/store";
+import CalendarHeaderActionsFilters from "./header/actions/calendar-header-actions-filters";
 
 export default function Calendar({
   events,
@@ -18,7 +18,9 @@ export default function Calendar({
   setMode,
   date,
   setDate,
-  calendarIconIsToday = true
+  calendarIconIsToday = true,
+  filters,
+  setFilters
 }: CalendarProps) {
   const { user } = useStore();
 
@@ -31,10 +33,13 @@ export default function Calendar({
       date={date}
       setDate={setDate}
       calendarIconIsToday={calendarIconIsToday}
+      filters={filters}
+      setFilters={setFilters}
     >
       <CalendarHeader>
         <CalendarHeaderDate />
         <CalendarHeaderActions>
+          <CalendarHeaderActionsFilters />
           <CalendarHeaderActionsMode />
           {/* <ProtectedRoute requiredRole="talker"> */}
           <CalendarHeaderActionsAdd />

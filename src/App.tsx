@@ -7,13 +7,20 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import { AuthProvider } from "@/components/authentication/auth-provider";
-import type { Talk } from "@/lib/types";
+import type { Talk, TalkSubject, TalkLevel } from "@/lib/types";
 import { loadEvents } from "@/lib/utils";
 
 function App() {
   const [events, setEvents] = useState<Talk[]>([]);
   const [mode, setMode] = useState<Mode>("month");
   const [date, setDate] = useState<Date>(new Date());
+  const [filters, setFilters] = useState<{
+    selectedSubject: TalkSubject | null;
+    selectedLevel: TalkLevel | null;
+  }>({
+    selectedSubject: null,
+    selectedLevel: null
+  });
 
   useEffect(() => {
     loadEvents(setEvents);
@@ -33,6 +40,8 @@ function App() {
                 setMode={setMode}
                 date={date}
                 setDate={setDate}
+                filters={filters}
+                setFilters={setFilters}
               />
             }
           />
